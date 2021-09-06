@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="app-container">
+    <slot name="left" />
     <el-button
       v-permission="permission.edit"
       :loading="crud.status.cu === 2"
@@ -38,6 +39,7 @@
         @click="toDelete"
       />
     </el-popover>
+
     <slot name="right" />
   </div>
 </template>
@@ -99,3 +101,12 @@ export default {
   },
 };
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+.app-container {
+  padding: 0;
+  .el-button {
+    margin-left: 0px;
+  }
+}
+</style>

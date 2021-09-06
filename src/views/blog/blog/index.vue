@@ -7,132 +7,220 @@
           v-model="query.blurry"
           clearable
           size="small"
-          placeholder="输入名称或者邮箱搜索"
+          placeholder="输入博客名搜索"
           style="width: 200px"
           class="filter-item"
           @keyup.enter.native="crud.toQuery"
         />
-        <date-range-picker v-model="query.createTime" class="date-item" />
+
         <el-select
           v-model="query.enabled"
           clearable
           size="small"
-          placeholder="状态"
+          placeholder="是否原创"
           class="filter-item"
-          style="width: 90px"
+          style="width: 100px"
           @change="crud.toQuery"
         >
           <el-option
-            v-for="item in enabledTypeOptions"
+            v-for="item in originalTypeOptions"
             :key="item.key"
             :label="item.display_name"
             :value="item.key"
           />
         </el-select>
+        <el-select
+          class="filter-item"
+          clearable
+          v-model="form.sort"
+          size="small"
+          placeholder="分类"
+          style="width: 156px"
+        >
+          <el-option
+            v-for="item in sorts"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+        <el-select
+          class="filter-item"
+          v-model="tagDatas"
+          multiple
+          size="small"
+          placeholder="标签"
+          style="width: 400px"
+        >
+          <el-option
+            v-for="item in tags"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+        <el-select
+          v-model="query.enabled"
+          clearable
+          size="small"
+          placeholder="发布状态"
+          class="filter-item"
+          style="width: 100px"
+          @change="crud.toQuery"
+        >
+          <el-option
+            v-for="item in publishTypeOptions"
+            :key="item.key"
+            :label="item.display_name"
+            :value="item.key"
+          />
+        </el-select>
+        <date-range-picker v-model="query.createTime" class="date-item" />
         <rrOperation />
       </div>
       <crudOperation :permission="permission" />
     </div>
 
     <el-dialog
-      append-to-body
       :close-on-click-modal="false"
       :before-close="crud.cancelCU"
       :visible.sync="crud.status.cu > 0"
-      :title="crud.status.title"
-      width="570px"
+      fullscreen
     >
-      <el-form
-        ref="form"
-        :inline="true"
-        :model="form"
-        :rules="rules"
-        size="small"
-        label-width="66px"
-      >
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" />
-        </el-form-item>
-        <el-form-item label="电话" prop="phone">
-          <el-input v-model.number="form.phone" />
-        </el-form-item>
-        <el-form-item label="昵称" prop="nickName">
-          <el-input v-model="form.nickName" />
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="form.email" />
-        </el-form-item>
-        <el-form-item label="部门" prop="dept.id">
-          <treeselect
-            v-model="form.dept.id"
-            :options="depts"
-            :load-options="loadDepts"
-            style="width: 178px"
-            placeholder="选择部门"
-          />
-        </el-form-item>
-        <el-form-item label="岗位" prop="jobs">
-          <el-select
-            v-model="jobDatas"
-            style="width: 178px"
-            multiple
-            placeholder="请选择"
-            @remove-tag="deleteTag"
-            @change="changeJob"
-          >
-            <el-option
-              v-for="item in jobs"
-              :key="item.name"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-radio-group v-model="form.gender" style="width: 178px">
-            <el-radio label="男">男</el-radio>
-            <el-radio label="女">女</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group
-            v-model="form.enabled"
-            :disabled="form.id === user.id"
-          >
-            <el-radio
-              v-for="item in dict.user_status"
-              :key="item.id"
-              :label="item.value"
-              >{{ item.label }}</el-radio
-            >
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 0" label="角色" prop="roles">
-          <el-select
-            v-model="roleDatas"
-            style="width: 437px"
-            multiple
-            placeholder="请选择"
-            @remove-tag="deleteTag"
-            @change="changeRole"
-          >
-            <el-option
-              v-for="item in roles"
-              :key="item.name"
-              :disabled="level !== 1 && item.level <= level"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <div class="meta">
+          <el-row>
+            <el-col :span="15">
+              <el-form-item label="标题" prop="title">
+                <el-input v-model="form.title"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="15">
+              <el-form-item label="简介">
+                <el-input v-model="form.summary"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="4">
+              <el-form-item label="分类">
+                <el-select
+                  v-model="form.sort"
+                  size="small"
+                  placeholder="请选择"
+                  style="width: 156px"
+                >
+                  <el-option
+                    v-for="item in sorts"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="16">
+              <el-form-item label="标签">
+                <el-select
+                  v-model="tagDatas"
+                  multiple
+                  size="small"
+                  placeholder="请选择"
+                  style="width: 400px"
+                  filterable
+                >
+                  <el-option
+                    v-for="item in tags"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="4">
+              <el-form-item label="是否原创" prop="isOriginal">
+                <el-radio-group v-model="form.isOriginal" size="mini">
+                  <el-radio label="1" border>原创</el-radio>
+                  <el-radio label="0" border>转载</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item label="是否发布" prop="isPublish">
+                <el-radio-group v-model="form.isPublish" size="mini">
+                  <el-radio label="1" border>发布</el-radio>
+                  <el-radio label="0" border>未发布</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col>
+              <el-form-item
+                label="作者"
+                v-if="form.isOriginal == 0"
+                prop="author"
+              >
+                <el-input v-model="form.author"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col>
+              <el-form-item label="文章出处" v-if="form.isOriginal == 0">
+                <el-input v-model="form.articlesPart"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+        <div class="photo">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="标题图" style="width: 380px">
+                <el-input v-model="form.articlesPart"></el-input>
+                <div class="preview-box">
+                  <div class="cancel-icon">
+                    <svg-icon icon-class="cancel"></svg-icon>
+                  </div>
+                  <div class="img-preview"></div>
+                  <div class="content">
+                    <div class="img-icon">
+                      <svg-icon icon-class="image"></svg-icon>
+                    </div>
+                    <div class="text">
+                      Paste the image url above, <br />to see a preview or
+                      download!
+                    </div>
+                  </div>
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+        <div>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="内容" prop="content">
+                <mavon-editor ref="md"></mavon-editor>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="crud.cancelCU">取消</el-button>
+        <el-button @click="crud.cancelCU">取 消</el-button>
         <el-button
           :loading="crud.status.cu === 2"
           type="primary"
           @click="crud.submitCU"
-          >确认</el-button
+          >确 认</el-button
         >
       </div>
     </el-dialog>
@@ -182,6 +270,12 @@
       <el-table-column
         align="center"
         :show-overflow-tooltip="true"
+        prop="sort"
+        label="分类"
+      />
+      <el-table-column
+        align="center"
+        :show-overflow-tooltip="true"
         prop="tag"
         label="标签"
       >
@@ -215,6 +309,15 @@
       >
         <template slot-scope="scope">
           <udOperation :data="scope.row" :permission="permission">
+            <el-button
+              slot="left"
+              v-permission="permission.edit"
+              :loading="crud.status.cu === 2"
+              size="mini"
+              type="success"
+              icon="el-icon-s-release"
+              @click="crud.toEdit(data)"
+            />
           </udOperation>
         </template>
       </el-table-column>
@@ -225,7 +328,7 @@
 </template>
 
 <script>
-import crudUser from "@/api/system/user";
+import crudBlog from "@/api/system/user";
 import { isvalidPhone } from "@/utils/validate";
 import { getDepts, getDeptSuperior } from "@/api/system/dept";
 import { getAll, getLevel } from "@/api/system/role";
@@ -236,8 +339,6 @@ import udOperation from "@crud/UD.operation";
 import pagination from "@crud/Pagination";
 import DateRangePicker from "@/components/DateRangePicker";
 import CRUD, { presenter, header, form, crud } from "@crud/crud";
-
-import { Treeselect } from "@riophae/vue-treeselect";
 import { mapGetters } from "vuex";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
@@ -245,21 +346,16 @@ import { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
 let userRoles = [];
 let userJobs = [];
 const defaultForm = {
-  id: null,
-  username: null,
-  nickName: null,
-  gender: "男",
-  email: null,
-  enabled: "false",
-  roles: [],
-  jobs: [],
-  dept: { id: null },
-  phone: null,
+  title: null,
+  summary: null,
+  isOriginal: "1",
+  isPublish: "0",
+  sorts: [],
+  tags: [],
 };
 export default {
   name: "Blog",
   components: {
-    Treeselect,
     crudOperation,
     rrOperation,
     udOperation,
@@ -268,9 +364,9 @@ export default {
   },
   cruds() {
     return CRUD({
-      title: "用户2",
+      title: "博客",
       url: "api/users",
-      crudMethod: { ...crudUser },
+      crudMethod: { ...crudBlog },
     });
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
@@ -288,6 +384,51 @@ export default {
       }
     };
     return {
+      sorts: [
+        {
+          value: "选项1",
+          label: "黄金糕",
+        },
+        {
+          value: "选项2",
+          label: "双皮奶",
+        },
+        {
+          value: "选项3",
+          label: "蚵仔煎",
+        },
+        {
+          value: "选项4",
+          label: "龙须面",
+        },
+        {
+          value: "选项5",
+          label: "北京烤鸭",
+        },
+      ],
+      tags: [
+        {
+          value: "选项1",
+          label: "黄金糕",
+        },
+        {
+          value: "选项2",
+          label: "双皮奶",
+        },
+        {
+          value: "选项3",
+          label: "蚵仔煎",
+        },
+        {
+          value: "选项4",
+          label: "龙须面",
+        },
+        {
+          value: "选项5",
+          label: "北京烤鸭",
+        },
+      ],
+      tagDatas: [],
       deptName: "",
       depts: [],
       deptDatas: [],
@@ -302,34 +443,25 @@ export default {
         edit: ["admin", "user:edit"],
         del: ["admin", "user:del"],
       },
-      enabledTypeOptions: [
-        { key: "true", display_name: "激活" },
-        { key: "false", display_name: "锁定" },
+      originalTypeOptions: [
+        { key: "true", display_name: "原创" },
+        { key: "false", display_name: "转载" },
+      ],
+      publishTypeOptions: [
+        { key: "true", display_name: "已发布" },
+        { key: "false", display_name: "未发布" },
       ],
       rules: {
-        username: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
-          {
-            min: 2,
-            max: 20,
-            message: "长度在 2 到 20 个字符",
-            trigger: "blur",
-          },
+        title: [{ required: true, message: "标题不能为空", trigger: "blur" }],
+        isPublish: [
+          { required: true, message: "发布字段不能为空", trigger: "blur" },
+          { pattern: /^[0-9]\d*$/, message: "发布字段只能为自然数" },
         ],
-        nickName: [
-          { required: true, message: "请输入用户昵称", trigger: "blur" },
-          {
-            min: 2,
-            max: 20,
-            message: "长度在 2 到 20 个字符",
-            trigger: "blur",
-          },
+        isOriginal: [
+          { required: true, message: "原创字段不能为空", trigger: "blur" },
+          { pattern: /^[0-9]\d*$/, message: "原创字段只能为自然数" },
         ],
-        email: [
-          { required: true, message: "请输入邮箱地址", trigger: "blur" },
-          { type: "email", message: "请输入正确的邮箱地址", trigger: "blur" },
-        ],
-        phone: [{ required: true, trigger: "blur", validator: validPhone }],
+        content: [{ required: true, message: "内容不能为空", trigger: "blur" }],
       },
     };
   },
@@ -338,82 +470,16 @@ export default {
     ...mapGetters(["user"]),
   },
   methods: {
-    getDepts() {
-      getDepts({ enabled: true }).then((res) => {
-        this.depts = res.content.map(function (obj) {
-          if (obj.hasChildren) {
-            obj.children = null;
-          }
-          return obj;
-        });
-      });
-    },
-    getSupDepts(deptId) {
-      getDeptSuperior(deptId).then((res) => {
-        const date = res.content;
-        this.buildDepts(date);
-        this.depts = date;
-      });
-    },
-    buildDepts(depts) {
-      depts.forEach((data) => {
-        if (data.children) {
-          this.buildDepts(data.children);
-        }
-        if (data.hasChildren && !data.children) {
-          data.children = null;
-        }
-      });
-    },
-    changeRole(value) {
-      userRoles = [];
-      value.forEach(function (data, index) {
-        const role = { id: data };
-        userRoles.push(role);
-      });
-    },
-    changeJob(value) {
-      userJobs = [];
-      value.forEach(function (data, index) {
-        const job = { id: data };
-        userJobs.push(job);
-      });
-    },
-    // 获取弹窗内部门数据
-    loadDepts({ action, parentNode, callback }) {
-      if (action === LOAD_CHILDREN_OPTIONS) {
-        getDepts({ enabled: true, pid: parentNode.id }).then((res) => {
-          parentNode.children = res.content.map(function (obj) {
-            if (obj.hasChildren) {
-              obj.children = null;
-            }
-            return obj;
-          });
-          setTimeout(() => {
-            callback();
-          }, 200);
-        });
-      }
-    },
-    deleteTag(value) {
-      userRoles.forEach(function (data, index) {
-        if (data.id === value) {
-          userRoles.splice(index, value);
-        }
-      });
-    },
-
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
       debugger;
-      this.getRoles();
+      // this.getRoles();
       if (form.id == null) {
-        this.getDepts();
+        // this.getDepts();
       } else {
-        this.getSupDepts(form.dept.id);
+        // this.getSupDepts(form.dept.id);
       }
-      this.getRoleLevel();
-      this.getJobs();
+      // this.getJobs();
       form.enabled = form.enabled.toString();
     },
     // 新增前将多选的值设置为空
@@ -426,18 +492,18 @@ export default {
     [CRUD.HOOK.beforeToEdit](crud, form) {
       debugger;
       console.log(this.form, "this.formthis.formthis.formthis.form");
-      this.getJobs(this.form.dept.id);
+      // this.getJobs(this.form.dept.id);
       this.jobDatas = [];
       this.roleDatas = [];
       userRoles = [];
       userJobs = [];
       const _this = this;
-      form.roles.forEach(function (role, index) {
+      form.roles.forEach(function(role, index) {
         _this.roleDatas.push(role.id);
         const rol = { id: role.id };
         userRoles.push(rol);
       });
-      form.jobs.forEach(function (job, index) {
+      form.jobs.forEach(function(job, index) {
         _this.jobDatas.push(job.id);
         const data = { id: job.id };
         userJobs.push(data);
@@ -469,74 +535,50 @@ export default {
       crud.form.jobs = userJobs;
       return true;
     },
-
-    // 改变状态
-    changeEnabled(data, val) {
-      this.$confirm(
-        '此操作将 "' +
-          this.dict.label.user_status[val] +
-          '" ' +
-          data.username +
-          ", 是否继续？",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
-        .then(() => {
-          console.log(data);
-          crudUser
-            .edit(data)
-            .then((res) => {
-              this.crud.notify(
-                this.dict.label.user_status[val] + "成功",
-                CRUD.NOTIFICATION_TYPE.SUCCESS
-              );
-            })
-            .catch(() => {
-              data.enabled = !data.enabled;
-            });
-        })
-        .catch(() => {
-          data.enabled = !data.enabled;
-        });
-    },
-    // 获取弹窗内角色数据
-    getRoles() {
-      getAll()
-        .then((res) => {
-          this.roles = res;
-        })
-        .catch(() => {});
-    },
-    // 获取弹窗内岗位数据
-    getJobs() {
-      getAllJob()
-        .then((res) => {
-          this.jobs = res.content;
-        })
-        .catch(() => {});
-    },
-    // 获取权限级别
-    getRoleLevel() {
-      getLevel()
-        .then((res) => {
-          this.level = res.level;
-        })
-        .catch(() => {});
-    },
   },
 };
 </script>
 
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 img {
   object-fit: cover;
   vertical-align: top;
   width: 130px;
   height: 70px;
 }
-</style>
+.el-radio {
+  margin-right: 0;
+}
+.el-dialog__body {
+  padding: 0;
+}
+.preview-box {
+  margin-top: 10px;
+  position: relative;
+  width: 260px;
+  height: 140px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  border: 1px dashed #c2cdda;
+}
+.img-icon {
+  font-size: 50px;
+}
+.preview-box.imgActive {
+  border: 2px solid transparent;
+}
 
+.preview-box .cancel-icon {
+  position: absolute;
+  right: 10px;
+  top: 0px;
+  z-index: 999;
+  color: #4158d0;
+  font-size: 10px;
+  cursor: pointer;
+}
+</style>

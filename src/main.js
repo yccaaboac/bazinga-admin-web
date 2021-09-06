@@ -2,16 +2,16 @@ import Vue from "vue";
 import Cookies from "js-cookie";
 import App from "./App.vue";
 import Element from "element-ui";
-
-
+import mavonEditor from "mavon-editor";
+import "mavon-editor/dist/css/index.css";
 import router from "./router/routers";
 import "./assets/icons";
 import "element-ui/lib/theme-chalk/index.css";
 import "./router/index";
 
-import dict from './components/Dict'
+import dict from "./components/Dict";
 // 权限指令
-import checkPer from '@/utils/permission'
+import checkPer from "@/utils/permission";
 import permission from "./components/Permission";
 // import "./assets/styles/element-variables.scss";
 import "./assets/styles/index.scss";
@@ -20,9 +20,10 @@ Vue.config.productionTip = false;
 
 // install是默认的方法。当外界在use这个组件的时候（Vue.use(xx)），就会调用本身的install方法，同时传一个Vue这个类的参数。
 // 用 axios时，之所以不需要用 Vue.use(axios)，就能直接使用，是因为开发者在封装 axios 时，没有写 install这一步
-Vue.use(checkPer)
-Vue.use(permission)
-Vue.use(dict)
+Vue.use(checkPer);
+Vue.use(mavonEditor);
+Vue.use(permission);
+Vue.use(dict);
 Vue.use(Element, {
   // 在引入Element时,可以传入一个全局配置对象
   //该对象目前支持size与zIndex字段
