@@ -7,7 +7,7 @@
           v-model="query.blurry"
           clearable
           size="small"
-          placeholder="输入博客名搜索"
+          placeholder="输入博客标题模糊搜索"
           style="width: 200px"
           class="filter-item"
           @keyup.enter.native="crud.toQuery"
@@ -39,9 +39,9 @@
         >
           <el-option
             v-for="item in sorts"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            :key="item.id"
+            :label="item.sortName"
+            :value="item.id"
           ></el-option>
         </el-select>
         <el-select
@@ -54,9 +54,9 @@
         >
           <el-option
             v-for="item in tags"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            :key="item.id"
+            :label="item.tagName"
+            :value="item.id"
           ></el-option>
         </el-select>
         <el-select
@@ -238,69 +238,44 @@
           <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="photo"
-        label="标题图"
-      >
+      <el-table-column align="center" prop="photo" label="标题图">
         <img src="./demo.jpg" />
       </el-table-column>
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="title"
-        label="标题"
-      />
+      <el-table-column align="center" prop="title" label="标题" />
 
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="author"
-        label="作者"
-      />
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="isOriginal"
-        label="是否原创"
-      >
-        <el-tag type="success">原创</el-tag>
+      <el-table-column align="center" prop="author" label="作者" />
+      <el-table-column align="center" prop="isOriginal" label="是否原创">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isOriginal == 1" type="success">原创</el-tag>
+          <el-tag v-if="scope.row.isOriginal == 0" type="info">转载</el-tag>
+        </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="sort"
-        label="分类"
-      />
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="tag"
-        label="标签"
-      >
-        <el-tag type="success">标签</el-tag>
+      <el-table-column align="center" prop="sort" label="分类">
+        <template slot-scope="scope">
+          <div>{{ scope.row.sort.sortName }}</div>
+        </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="clickCount"
-        label="点击数"
-      />
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="isPublish"
-        label="发布状态"
-      >
-        <el-tag type="success">发布状态</el-tag>
+      <el-table-column align="center" prop="tags" label="标签">
+        <template slot-scope="scope">
+          <template>
+            <el-tag
+              style="margin-left: 3px; margin-bottom: 3px"
+              type="warning"
+              :key="index"
+              v-for="(item, index) in scope.row.tags"
+              >{{ item.tagName }}</el-tag
+            >
+          </template>
+        </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        :show-overflow-tooltip="true"
-        prop="createTime"
-        label="创建时间"
-      />
+      <el-table-column align="center" prop="clickCount" label="点击数" />
+      <el-table-column align="center" prop="isPublish" label="发布状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isPublish == 1" type="success">发布</el-tag>
+          <el-tag v-if="scope.row.isPublish == 0" type="info">未发布</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" prop="createTime" label="创建时间" />
       <el-table-column
         v-if="checkPer(['admin', 'user:edit', 'user:del'])"
         label="操作"
@@ -331,8 +306,10 @@
 import crudBlog from "@/api/system/user";
 import { isvalidPhone } from "@/utils/validate";
 import { getDepts, getDeptSuperior } from "@/api/system/dept";
-import { getAll, getLevel } from "@/api/system/role";
+import { getAllTag } from "@/api/blog/tag";
+import { getAllSort } from "@/api/blog/sort";
 import { getAllJob } from "@/api/system/job";
+import { getListByDictNameList } from "@/api/system/dictDetail";
 import rrOperation from "@crud/RR.operation";
 import crudOperation from "@crud/CRUD.operation";
 import udOperation from "@crud/UD.operation";
@@ -365,7 +342,7 @@ export default {
   cruds() {
     return CRUD({
       title: "博客",
-      url: "api/users",
+      url: "api/blogs",
       crudMethod: { ...crudBlog },
     });
   },
@@ -384,50 +361,8 @@ export default {
       }
     };
     return {
-      sorts: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎",
-        },
-        {
-          value: "选项4",
-          label: "龙须面",
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭",
-        },
-      ],
-      tags: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎",
-        },
-        {
-          value: "选项4",
-          label: "龙须面",
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭",
-        },
-      ],
+      sorts: [],
+      tags: [],
       tagDatas: [],
       deptName: "",
       depts: [],
@@ -467,9 +402,33 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(["blog"]),
   },
   methods: {
+    getSorts() {
+      getAllSort()
+        .then((res) => {
+          this.sorts = res.content;
+        })
+        .catch(() => {});
+    },
+    getTags() {
+      getAllTag()
+        .then((res) => {
+          this.tags = res.content;
+        })
+        .catch(() => {});
+    },
+    getDictList() {
+      var dictTypeList = ["original_status", "publish_status"];
+      getListByDictNameList(dictTypeList).then((res) => {});
+    },
+
+    [CRUD.HOOK.beforeRefresh]() {
+      this.getTags();
+      this.getSorts();
+      this.getDictList();
+    },
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
       debugger;
@@ -498,12 +457,12 @@ export default {
       userRoles = [];
       userJobs = [];
       const _this = this;
-      form.roles.forEach(function(role, index) {
+      form.roles.forEach(function (role, index) {
         _this.roleDatas.push(role.id);
         const rol = { id: role.id };
         userRoles.push(rol);
       });
-      form.jobs.forEach(function(job, index) {
+      form.jobs.forEach(function (job, index) {
         _this.jobDatas.push(job.id);
         const data = { id: job.id };
         userJobs.push(data);

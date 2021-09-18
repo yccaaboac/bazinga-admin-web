@@ -11,6 +11,7 @@ import Vue from "vue";
  * 要使用多crud时，请在关联crud的组件处使用crud-tag进行标记，如：<jobForm :job-status="dict.job_status" crud-tag="job" />
  */
 function CRUD(options) {
+  debugger;
   console.log("CRUD方法");
   const defaultOptions = {
     tag: "default",
@@ -57,6 +58,9 @@ function CRUD(options) {
     // 调试开关
     debug: false,
   };
+
+  debugger;
+  //将默认的选项进行赋值
   options = mergeOptions(defaultOptions, options);
 
   console.log(
@@ -68,8 +72,8 @@ function CRUD(options) {
     // 记录数据状态
     dataStatus: {},
     status: {
-      add: CRUD.STATUS.NORMAL,
-      edit: CRUD.STATUS.NORMAL,
+      add: CRUD.STATUS.NORMAL, //0
+      edit: CRUD.STATUS.NORMAL, //0
       // 添加或编辑状态
       get cu() {
         //getter获取属性值，属性名为函数名，属性值为返回值
@@ -140,8 +144,6 @@ function CRUD(options) {
     },
     // 搜索
     toQuery() {
-      debugger;
-      console.log(crud);
       crud.page.page = 1;
       crud.refresh();
     },
@@ -619,6 +621,7 @@ function CRUD(options) {
     },
   };
   const crud = Object.assign({}, data);
+  debugger;
   console.log("crud<-Object.assign({}, data)", crud);
 
   console.log("Vue.observable(crud)");
@@ -626,6 +629,7 @@ function CRUD(options) {
   Vue.observable(crud);
   // 附加方法
   Object.assign(crud, methods);
+  console.log(crud);
   console.log("crud include methods", crud);
 
   // 记录初始默认的查询参数，后续重置查询时使用
@@ -682,6 +686,7 @@ function CRUD(options) {
 
   console.log("crud include other object", crud);
   // 冻结处理，需要扩展数据的话，使用crud.updateProp(name, value)，以crud.props.name形式访问，这个是响应式的，可以做数据绑定
+
   //Object.freeze() 方法可以冻结一个对象。
   //一个被冻结的对象再也不能被修改；冻结了一个对象则不能向这个对象添加新的属性，不能删除已有属性，不能修改该对象已有属性的可枚举性、可配置性、可写性，以及不能修改已有属性的值。
   //此外，冻结一个对象后该对象的原型也不能被修改。freeze() 返回和传入的参数相同的对象
@@ -779,6 +784,7 @@ function presenter(crud) {
         "presenter......beforeCreate，给presenter的crud（data）赋值，并且给$crud（this）赋值"
       );
       this.$crud = this.$crud || {};
+      console.log(this.$crud);
       //调用原型的cruds方法或者为undifined
       let cruds =
         this.$options.cruds instanceof Function ? this.$options.cruds() : crud;
