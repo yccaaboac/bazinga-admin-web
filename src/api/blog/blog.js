@@ -24,4 +24,12 @@ export function edit(data) {
   });
 }
 
-export default { add, edit, del };
+export function changeRelease(params) {
+  return request({
+    url: "api/blogs/changeRelease",
+    method: "put",
+    params,
+  });
+}
+
+export default { add, edit, del, changeRelease };

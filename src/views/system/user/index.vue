@@ -463,6 +463,7 @@ export default {
 
     // 改变状态
     changeEnabled(data, val) {
+      console.log(data, val);
       this.$confirm(
         '此操作将 "' +
           this.dict.label.user_status[val] +
