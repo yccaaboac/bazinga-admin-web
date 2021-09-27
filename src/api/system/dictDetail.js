@@ -1,13 +1,5 @@
 import request from "@/utils/request";
 
-export function getListByDictNameList(data) {
-  return request({
-    url: "api/dictDetail/getListByDictTypeList",
-    method: "post",
-    data,
-  });
-}
-
 export function get(dictName) {
   const params = {
     dictName,
@@ -21,18 +13,18 @@ export function get(dictName) {
   });
 }
 
-export function getDictMap(dictName) {
-  const params = {
-    dictName,
-    page: 0,
-    size: 9999,
-  };
-  return request({
-    url: "api/dictDetail/map",
-    method: "get",
-    params,
-  });
-}
+// export function getDictMap(dictName) {
+//   const params = {
+//     dictName,
+//     page: 0,
+//     size: 9999,
+//   };
+//   return request({
+//     url: "api/dictDetail/map",
+//     method: "get",
+//     params,
+//   });
+// }
 
 export function add(data) {
   return request({

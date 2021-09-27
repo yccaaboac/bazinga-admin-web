@@ -358,6 +358,7 @@ function CRUD(options) {
      * @param {*} data 数据项
      */
     doDelete(data) {
+      debugger;
       let delAll = false;
       let dataStatus;
       const ids = [];

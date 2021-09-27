@@ -12,7 +12,6 @@
           class="filter-item"
           @keyup.enter.native="crud.toQuery"
         />
-        <date-range-picker v-model="query.createTime" class="date-item" />
         <el-select
           v-model="query.enabled"
           clearable
@@ -25,10 +24,12 @@
           <el-option
             v-for="item in categoryTypeOptions"
             :key="item.key"
-            :label="item.label"
-            :value="item.value"
+            :label="item.display_name"
+            :value="item.key"
           />
         </el-select>
+        <date-range-picker v-model="query.createTime" class="date-item" />
+
         <rrOperation />
       </div>
       <crudOperation :permission="permission" />
@@ -40,7 +41,7 @@
       :before-close="crud.cancelCU"
       :visible.sync="crud.status.cu > 0"
       :title="crud.status.title"
-      width="570px"
+      width="350px"
     >
       <el-form
         ref="form"
@@ -48,18 +49,18 @@
         :model="form"
         :rules="rules"
         size="small"
-        label-width="66px"
+        label-width="88px"
       >
         <el-form-item label="类别名称" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="类别描述" prop="description">
-          <el-input v-model.number="form.description" />
+          <el-input v-model="form.description" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态" prop="enabled">
           <el-radio-group v-model="form.enabled">
             <el-radio
-              v-for="item in categoryTypeOptions"
+              v-for="item in dict.category_status"
               :key="item.id"
               :label="item.value"
               >{{ item.label }}</el-radio
@@ -136,13 +137,15 @@ import rrOperation from "@crud/RR.operation";
 import crudOperation from "@crud/CRUD.operation";
 import udOperation from "@crud/UD.operation";
 import pagination from "@crud/Pagination";
-import { getListByDictNameList } from "@/api/system/dictDetail";
 import DateRangePicker from "@/components/DateRangePicker";
 import CRUD, { presenter, header, form, crud } from "@crud/crud";
-
 import { mapGetters } from "vuex";
 
-const defaultForm = {};
+const defaultForm = {
+  name: null,
+  description: null,
+  enabled: "false",
+};
 export default {
   name: "Category",
   components: {
@@ -163,7 +166,10 @@ export default {
   dicts: ["category_status"],
   data() {
     return {
-      categoryTypeOptions: [],
+      categoryTypeOptions: [
+        { key: "true", display_name: "激活" },
+        { key: "false", display_name: "禁止" },
+      ],
       permission: {
         add: ["admin", "user:add"],
         edit: ["admin", "user:edit"],
@@ -185,6 +191,8 @@ export default {
 
   methods: {
     changeEnabled(data, val) {
+      debugger;
+      console.log(data, val);
       this.$confirm(
         '此操作将 "' +
           this.dict.label.category_status[val] +
@@ -203,7 +211,7 @@ export default {
             .edit(data)
             .then((res) => {
               this.crud.notify(
-                this.dict.label.user_status[val] + "成功",
+                this.dict.label.category_status[val] + "成功",
                 CRUD.NOTIFICATION_TYPE.SUCCESS
               );
             })
@@ -215,14 +223,10 @@ export default {
           data.enabled = !data.enabled;
         });
     },
-    getDictList() {
-      var dictTypeList = ["category_status"];
-      getListByDictNameList(dictTypeList).then((res) => {
-        this.categoryTypeOptions = res.category_status;
-      });
-    },
-    [CRUD.HOOK.beforeRefresh]() {
-      this.getDictList();
+
+    // 新增与编辑前做的操作
+    [CRUD.HOOK.afterToCU](crud, form) {
+      form.enabled = form.enabled.toString();
     },
   },
 };

@@ -1,12 +1,11 @@
 import request from "@/utils/request";
 
-export function getDicts() {
-  return request({
-    url: "api/dict/all",
-    method: "get",
-  });
-}
-
+// export function getDicts() {
+//   return request({
+//     url: "api/dict/all",
+//     method: "get",
+//   });
+// }
 
 export function add(data) {
   return request({

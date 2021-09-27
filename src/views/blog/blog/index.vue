@@ -313,7 +313,7 @@ import { getDepts, getDeptSuperior } from "@/api/system/dept";
 import { getAllTag } from "@/api/blog/tag";
 import { getAllCategory } from "@/api/blog/category";
 import { getAllJob } from "@/api/system/job";
-import { getListByDictNameList } from "@/api/system/dictDetail";
+// import { getListByDictNameList } from "@/api/system/dictDetail";
 import rrOperation from "@crud/RR.operation";
 import crudOperation from "@crud/CRUD.operation";
 import udOperation from "@crud/UD.operation";
@@ -379,12 +379,12 @@ export default {
         del: ["admin", "user:del"],
       },
       originalTypeOptions: [
-        { key: "true", display_name: "原创" },
-        { key: "false", display_name: "转载" },
+        { key: "1", display_name: "原创" },
+        { key: "0", display_name: "转载" },
       ],
       publishTypeOptions: [
-        { key: "true", display_name: "发布" },
-        { key: "false", display_name: "下架" },
+        { key: "1", display_name: "发布" },
+        { key: "0", display_name: "下架" },
       ],
       rules: {
         title: [{ required: true, message: "标题不能为空", trigger: "blur" }],
