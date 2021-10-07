@@ -15,12 +15,18 @@ import checkPer from "@/utils/permission";
 import permission from "./components/Permission";
 // import "./assets/styles/element-variables.scss";
 import "./assets/styles/index.scss";
+
+// 代码高亮
+import VueHighlightJS from 'vue-highlightjs'
+import 'highlight.js/styles/atom-one-dark.css'
+
 import store from "./store";
 Vue.config.productionTip = false;
 
 // install是默认的方法。当外界在use这个组件的时候（Vue.use(xx)），就会调用本身的install方法，同时传一个Vue这个类的参数。
 // 用 axios时，之所以不需要用 Vue.use(axios)，就能直接使用，是因为开发者在封装 axios 时，没有写 install这一步
 Vue.use(checkPer);
+Vue.use(VueHighlightJS)
 Vue.use(mavonEditor);
 Vue.use(permission);
 Vue.use(dict);

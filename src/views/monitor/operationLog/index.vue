@@ -69,10 +69,10 @@ import crudOperation from "@crud/CRUD.operation";
 import pagination from "@crud/Pagination";
 
 export default {
-  name: "Log",
+  name: "OperationLog",
   components: { Search, crudOperation, pagination },
   cruds() {
-    return CRUD({ title: "日志", url: "api/logs" });
+    return CRUD({ title: "日志", url: "/api/operationLog" });
   },
   mixins: [presenter()],
   created() {

@@ -65,30 +65,6 @@ router.beforeEach((to, from, next) => {
 export const loadMenus = (next, to) => {
   buildMenus().then((res) => {
     console.log(res, "res");
-    // (6) [{…}, {…}, {…}, {…}, {…}, {…}]
-    // 0:
-    // alwaysShow: true
-    // children: Array(7)
-    // 0: {component: "system/user/index", hidden: false, meta: {…}, name: "User", path: "user"}
-    // 1: {component: "system/role/index", hidden: false, meta: {…}, name: "Role", path: "role"}
-    // 2: {component: "system/menu/index", hidden: false, meta: {…}, name: "Menu", path: "menu"}
-    // 3: {component: "system/dept/index", hidden: false, meta: {…}, name: "Dept", path: "dept"}
-    // 4: {component: "system/job/index", hidden: false, meta: {…}, name: "Job", path: "job"}
-    // 5: {component: "system/dict/index", hidden: false, meta: {…}, name: "Dict", path: "dict"}
-    // 6: {component: "system/timing/index", hidden: false, meta: {…}, name: "Timing", path: "timing"}
-    // length: 7
-    // __proto__: Array(0)
-    // component: "Layout"
-    // hidden: false
-    // meta: {icon: "system", noCache: true, title: "系统管理"}
-    // name: "系统管理"
-    // path: "/system"
-    // redirect: "noredirect"
-    // __proto__: Object
-    // 1: {alwaysShow: true, children: Array(5), component: "Layout", hidden: false, meta: {…}, …}
-    // 2: {alwaysShow: true, children: Array(5), component: "Layout", hidden: false, meta: {…}, …}
-    //...
-
     const sdata = JSON.parse(JSON.stringify(res));
     const rdata = JSON.parse(JSON.stringify(res));
 

@@ -309,11 +309,8 @@
 <script>
 import crudBlog from "@/api/blog/blog";
 import { isvalidPhone } from "@/utils/validate";
-import { getDepts, getDeptSuperior } from "@/api/system/dept";
 import { getAllTag } from "@/api/blog/tag";
 import { getAllCategory } from "@/api/blog/category";
-import { getAllJob } from "@/api/system/job";
-// import { getListByDictNameList } from "@/api/system/dictDetail";
 import rrOperation from "@crud/RR.operation";
 import crudOperation from "@crud/CRUD.operation";
 import udOperation from "@crud/UD.operation";
@@ -322,8 +319,6 @@ import DateRangePicker from "@/components/DateRangePicker";
 import CRUD, { presenter, header, form, crud } from "@crud/crud";
 import { mapGetters } from "vuex";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
-import { stringify } from "qs";
 
 let blogTags = []; //后台服务需要的格式
 
