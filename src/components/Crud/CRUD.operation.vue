@@ -226,7 +226,7 @@ export default {
       });
       if (selectedCount === 0) {
         this.crud.notify("请至少选择一列", CRUD.NOTIFICATION_TYPE.WARNING);
-        this.$nextTick(function () {
+        this.$nextTick(function() {
           item.visible = true;
         });
         return;

@@ -22,7 +22,7 @@
           @change="crud.toQuery"
         >
           <el-option
-            v-for="item in categoryTypeOptions"
+            v-for="item in pictureCategoryTypeOptions"
             :key="item.key"
             :label="item.display_name"
             :value="item.key"
@@ -115,14 +115,22 @@
         label="创建日期"
       />
       <el-table-column
-        v-if="checkPer(['admin', 'user:edit', 'user:del'])"
+        v-if="checkPer(['admin', 'picCategory:edit', 'picCategory:del'])"
         label="操作"
-        width="115"
+        width="200"
         align="center"
         fixed="right"
       >
         <template slot-scope="scope">
-          <udOperation :data="scope.row" :permission="permission" />
+          <udOperation :data="scope.row" :permission="permission">
+            <el-button
+              slot="right"
+              size="mini"
+              type="success"
+              @click="handleManager(scope.row)"
+              >图片列表
+            </el-button>
+          </udOperation>
         </template>
       </el-table-column>
     </el-table>
@@ -132,7 +140,7 @@
 </template>
 
 <script>
-import crudCategory from "@/api/blog/category";
+import crudPicCategory from "@/api/picture/picCategory";
 import rrOperation from "@crud/RR.operation";
 import crudOperation from "@crud/CRUD.operation";
 import udOperation from "@crud/UD.operation";
@@ -147,7 +155,7 @@ const defaultForm = {
   enabled: "false",
 };
 export default {
-  name: "Category",
+  name: "PictureCategory",
   components: {
     crudOperation,
     rrOperation,
@@ -157,23 +165,23 @@ export default {
   },
   cruds() {
     return CRUD({
-      title: "类别",
-      url: "api/categories",
-      crudMethod: { ...crudCategory },
+      title: "图片类别",
+      url: "api/picCategories",
+      crudMethod: { ...crudPicCategory },
     });
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   dicts: ["category_status"],
   data() {
     return {
-      categoryTypeOptions: [
+      pictureCategoryTypeOptions: [
         { key: "true", display_name: "激活" },
         { key: "false", display_name: "禁止" },
       ],
       permission: {
-        add: ["admin", "category:add"],
-        edit: ["admin", "category:edit"],
-        del: ["admin", "category:del"],
+        add: ["admin", "picCategory:add"],
+        edit: ["admin", "picCategory:edit"],
+        del: ["admin", "picCategory:del"],
       },
       rules: {
         name: [
@@ -190,6 +198,13 @@ export default {
   },
 
   methods: {
+    handleManager: function (row) {
+      var id = row.id;
+      this.$router.push({
+        path: "picture",
+        query: { picCategoryId: id },
+      });
+    },
     changeEnabled(data, val) {
       debugger;
       console.log(data, val);
@@ -207,7 +222,7 @@ export default {
         }
       )
         .then(() => {
-          crudCategory
+          crudPicCategory
             .edit(data)
             .then((res) => {
               this.crud.notify(
