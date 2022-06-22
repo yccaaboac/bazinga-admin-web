@@ -15,14 +15,20 @@
       size="mini"
       type="warning"
       icon="el-icon-refresh-left"
-      @click="crud.resetQuery()"
+      @click="crud.resetQuery(defaultQuery)"
       >重置</el-button
     >
   </span>
 </template>
 <script>
-import {crud} from '@crud/crud'
+import { crud } from "@crud/crud";
 export default {
   mixins: [crud()],
+  props: {
+    defaultQuery: {
+      type: Object,
+      default: undefined,
+    },
+  },
 };
 </script>

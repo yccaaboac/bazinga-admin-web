@@ -353,6 +353,7 @@ export default {
       }
     },
     getMenus(tree, treeNode, resolve) {
+      console.log("debugger;debugger;debugger;debugger;debugger;");
       const params = { pid: tree.id };
       setTimeout(() => {
         crudMenu.getMenus(params).then((res) => {

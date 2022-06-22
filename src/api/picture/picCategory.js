@@ -4,8 +4,10 @@ export function getAllCategory() {
   return request({
     url: "api/picCategories/all",
     method: "get",
+    
   });
 }
+
 
 export function add(data) {
   return request({

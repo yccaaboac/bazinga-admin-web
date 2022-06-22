@@ -57,6 +57,16 @@ function CRUD(options) {
     queryOnPresenterCreated: true,
     // 调试开关
     debug: false,
+
+    //由于page需要设置，所以从data提到defaultOptions中
+    page: {
+      // 页码
+      page: 0,
+      // 每页数据条数
+      size: 10,
+      // 总数据条数
+      total: 0,
+    },
   };
 
   debugger;
@@ -110,14 +120,6 @@ function CRUD(options) {
       edit: "编辑成功",
       del: "删除成功",
     },
-    page: {
-      // 页码
-      page: 0,
-      // 每页数据条数
-      size: 10,
-      // 总数据条数
-      total: 0,
-    },
     // 整体loading
     loading: false,
     // 导出的 Loading
@@ -147,6 +149,7 @@ function CRUD(options) {
       crud.page.page = 1;
       crud.refresh();
     },
+
     // 刷新
     refresh() {
       debugger;
@@ -450,24 +453,30 @@ function CRUD(options) {
     },
     // 选择改变
     selectionChangeHandler(val) {
+      console.log(val, "vvvvvvv");
       crud.selections = val;
     },
     /**
      * 重置查询参数
      * @param {Boolean} toQuery 重置后进行查询操作
      */
-    resetQuery(toQuery = true) {
+    resetQuery(defaultQuery) {
+      if (!callVmHook(crud, CRUD.HOOK.beforeReset)) {
+        return;
+      }
       debugger;
-      const defaultQuery = JSON.parse(JSON.stringify(crud.defaultQuery));
+      defaultQuery =
+        defaultQuery === undefined
+          ? JSON.parse(JSON.stringify(crud.defaultQuery))
+          : JSON.parse(JSON.stringify(defaultQuery));
       const query = crud.query;
       Object.keys(query).forEach((key) => {
         query[key] = defaultQuery[key];
       });
       // 重置参数
       this.params = {};
-      if (toQuery) {
-        crud.toQuery();
-      }
+      crud.toQuery();
+      callVmHook(crud, CRUD.HOOK.afterReset);
     },
     /**
      * 重置表单
@@ -589,6 +598,7 @@ function CRUD(options) {
       Vue.set(crud.props, name, value);
     },
     getDataId(data) {
+      debugger;
       return data[this.idField];
     },
     getTable() {
@@ -947,7 +957,7 @@ function crud(options = {}) {
 }
 
 /**
- * CRUD钩子
+ * CRUD钩子，所有的callVmHook(crud, CRUD.HOOK.beforeXxx)都存在返回值，目的是决定是否要执行Xxx
  */
 CRUD.HOOK = {
   /** 刷新 - 之前 */
@@ -990,6 +1000,11 @@ CRUD.HOOK = {
   beforeSubmit: "beforeCrudSubmitCU",
   /** 提交 - 之后 */
   afterSubmit: "afterCrudSubmitCU",
+  /** 重置 - 之前 */
+  beforeReset: "beforeCrudReset",
+  /** 重置 - 之后 */
+  afterReset: "afterCrudReset",
+
   afterAddError: "afterCrudAddError",
   afterEditError: "afterCrudEditError",
 };

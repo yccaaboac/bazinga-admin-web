@@ -1,4 +1,3 @@
-
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
@@ -7,22 +6,22 @@
  */
 export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
-    return null
+    return null;
   }
-  const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
-  let date
-  if (typeof time === 'undefined' || time === null || time === 'null') {
-    return ''
-  } else if (typeof time === 'object') {
-    date = time
+  const format = cFormat || "{y}-{m}-{d} {h}:{i}:{s}";
+  let date;
+  if (typeof time === "undefined" || time === null || time === "null") {
+    return "";
+  } else if (typeof time === "object") {
+    date = time;
   } else {
-    if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
-      time = parseInt(time)
+    if (typeof time === "string" && /^[0-9]+$/.test(time)) {
+      time = parseInt(time);
     }
-    if ((typeof time === 'number') && (time.toString().length === 10)) {
-      time = time * 1000
+    if (typeof time === "number" && time.toString().length === 10) {
+      time = time * 1000;
     }
-    date = new Date(time)
+    date = new Date(time);
   }
   const formatObj = {
     y: date.getFullYear(),
@@ -31,18 +30,20 @@ export function parseTime(time, cFormat) {
     h: date.getHours(),
     i: date.getMinutes(),
     s: date.getSeconds(),
-    a: date.getDay()
-  }
+    a: date.getDay(),
+  };
   const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
-    let value = formatObj[key]
+    let value = formatObj[key];
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
-    if (result.length > 0 && value < 10) {
-      value = '0' + value
+    if (key === "a") {
+      return ["日", "一", "二", "三", "四", "五", "六"][value];
     }
-    return value || 0
-  })
-  return time_str
+    if (result.length > 0 && value < 10) {
+      value = "0" + value;
+    }
+    return value || 0;
+  });
+  return time_str;
 }
 
 /**
@@ -54,7 +55,7 @@ export function parseTime(time, cFormat) {
 export function debounce(func, wait, immediate) {
   let timeout, args, context, timestamp, result;
 
-  const later = function () {
+  const later = function() {
     // 据上一次触发时间间隔
     const last = +new Date() - timestamp;
 
@@ -71,7 +72,7 @@ export function debounce(func, wait, immediate) {
     }
   };
 
-  return function (...args) {
+  return function(...args) {
     context = this;
     timestamp = +new Date();
     const callNow = immediate && !timeout;
@@ -88,13 +89,25 @@ export function debounce(func, wait, immediate) {
 
 // 下载文件
 export function downloadFile(obj, name, suffix) {
-  const url = window.URL.createObjectURL(new Blob([obj]))
-  const link = document.createElement('a')
-  link.style.display = 'none'
-  link.href = url
-  const fileName = parseTime(new Date()) + '-' + name + '.' + suffix
-  link.setAttribute('download', fileName)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  const url = window.URL.createObjectURL(new Blob([obj]));
+  const link = document.createElement("a");
+  link.style.display = "none";
+  link.href = url;
+  const fileName = parseTime(new Date()) + "-" + name + "." + suffix;
+  link.setAttribute("download", fileName);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+//复制文字到剪切板
+export function copyText(text) {
+  debugger;
+  const oInput = document.createElement("input");
+  oInput.value = text;
+  document.body.appendChild(oInput);
+  oInput.select(); // 选择对象
+  document.execCommand("Copy"); // 执行浏览器复制命令
+  oInput.className = "oInput";
+  oInput.style.display = "none";
 }
